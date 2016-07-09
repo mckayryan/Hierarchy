@@ -24,21 +24,22 @@ config = {
 }
 
 class gui(object):
+	#the object that prints to the screen
     resolution = res_width, res_height = (1280, 720)    
     def __init__(self):
         #set window screen res - pixels 
         self.display = pygame.display.set_mode(self.resolution)
         pygame.display.set_caption('Hierarchy')
     def fill_color(self, screen, color, position):
-    	screen.fill(color)
-    	self.display.blit(screen, position)
+        screen.fill(color)
+        self.display.blit(screen, position)
     def write_text(self, size, message, color, location):
-    	font = pygame.font.Font(None, size)
-    	text = font.render(message, 1, color)
-    	textpos = text.get_rect()
-    	textpos.center = location
-    	self.display.blit(text, textpos)
-    def intro_display(self, queue):
+        font = pygame.font.Font(None, size)
+        text = font.render(message, 1, color)
+        textpos = text.get_rect()
+        textpos.center = location
+        self.display.blit(text, textpos)
+    def intro_display(self):
         #set up intro surface
         intro_screen_position = (0, 0)
         intro_screen = pygame.Surface(self.resolution)
@@ -78,22 +79,86 @@ class gui(object):
 
 
 class event_loop(object):
-    def player_input(self, screen):
+    #the object that manages events and time, using screen as an input
+    def add_gui(self, gui):
+        self.display = gui
+    # def game_map_input():
+    def control_input(self, action):
+    #takes the input from the control, as a string and does stuff
+        if action == 'escape':
+            raise SystemExit
+    # def player_input():
+    # def game_map_output():
+    # def player_output():
+    def gui_output(self, x):
+    #takes an integer as an argument and displays
+        if x == 1: 
+            self.display.intro_display()
+        else:
+            self.display.map_display()
+    # def objects_output():
+
+class game_map(object):
+    #storage of updatable *4 pixel object map
+    #also includes structural map at *64 pixel
+    def events_input():
+        pass
+    # def player_input():
+    # def objects_input():
+    def events_output():
+        pass
+    # def player_output():
+    # def objects_output():
+
+def generate_map(game_map):
+    #fills an empty game map with the starting game state
+    pass
+
+class control_input(object):
+    #management of player input
+    def add_event_loop(self, event_loop):
+        self.event_queue = event_loop
+    def watch_keys(self):
+        #monitors for key input and reports back to event loop
+        #OUTPUT to EVENT QUEUE
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    #exit_game()
-                    raise SystemExit
+                    self.event_queue.control_input('escape')
                 elif event.key == pygame.K_SPACE:
-                    screen.map_display()
+                    #go from intro screen to game screen
+                    self.event_queue.gui_output(2)
+
+# class player_character(object):
+# 	#storage for player attributes
+# 	def map_input():
+# 	def events_input():
+# 	def objects_input():
+# 	def map_output():
+# 	def objects_output():
+# 	def events_output():
+
+# class game_objects(object):
+# 	#all objects on the map
+# 	def events_input():
+# 	def map_input():
+# 	def player_input():
+# 	def events_output():
+# 	def map_output():
+# 	def player_output():
+
 
 
 def main():
-    queue = event_loop()
+	#initialise modules
     screen = gui()
-    screen.intro_display(queue)
+    queue = event_loop()
+    queue.add_gui(screen)
+    controls = control_input()
+    controls.add_event_loop(queue)
+    queue.gui_output(1)
     while True:
-        queue.player_input(screen)
+        controls.watch_keys()
 
 
 if __name__ == "__main__":
