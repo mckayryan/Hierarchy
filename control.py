@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 ####    Hierarchy
 ##      Creators: Adam Stiles and Ryan McKay
 ##      July 2016
@@ -10,23 +12,11 @@ import random
 pygame.init()
 random.seed()
 
-config = {
-    'description': 'Hierarchy',
-    'author': 'Adam Stiles and Ryan McKay',
-    'url': 'URL to get it at.',
-    'download_url': 'Where to download it.',
-    'author_email': 'My email.',
-    'version': '0.1',
-    'install_requires': [''],
-    'packages': ['NAME'],
-    'scripts': [],
-    'name': 'projectname'
-}
 
 class GUI(object):
-    
+
     def __init__(self):
-        #set window screen res - pixels 
+        #set window screen res - pixels
         self.resolution = res_width, res_height = (1280, 720)
         self.screen = pygame.display.set_mode(self.resolution)
         pygame.display.set_caption('Hierarchy')
@@ -42,7 +32,7 @@ class GUI(object):
         #Initiate map surface - pixels
         self.whole_map_dim = ((10000, 10000))
         self.whole_map = pygame.Surface(self.whole_map_dim)
-        #fill black
+        #fill black, RGB
         black = (0,0,0)
         self.whole_map.fill(black)
 
@@ -50,7 +40,7 @@ class GUI(object):
         self.map_segment_dim = segment_posx, segment_posy, segment_width, segment_height = (0, 0, map_width, map_height)
         self.map_segment = pygame.Rect(self.map_segment_dim)
         self.map_sub_screen.blit(self.whole_map.subsurface(self.map_segment), (0,0))
-        
+
         #Draw to display
         pygame.display.flip()
 
