@@ -17,7 +17,6 @@ class gui(object):
 	#the object that prints to the screen
     resolution = res_width, res_height = (1280, 720)
     cur_gui = None
-
     def set_res(self):
         self.display = pygame.display.set_mode(self.resolution)
         pygame.display.set_caption('Hierarchy')
@@ -55,6 +54,12 @@ class intro_gui(gui):
         self.cur_gui = self
         #draw to display
         pygame.display.flip()
+
+    def get_gui_buttons(self):
+        # create dict of intro_gui buttons tuple (rect, type)
+        return {'map_display': (pygame.Rect(0,0,100,200), 'gui')}
+
+
 
 class map_display(gui):
     def __init__(self, game_map):
@@ -102,7 +107,7 @@ class map_display(gui):
 
 
 # add game_state
-def event_loop(game_m, intro_g):
+def event_loop(game_m, cur_g):
     #the object that manages events and time, using screen as an input
     # def player_input():
     # def player_output():
@@ -117,7 +122,34 @@ def event_loop(game_m, intro_g):
             elif event.key == pygame.K_SPACE:
                 #go from intro screen to game screen
                 map_display(game_m)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            try:
+                buttons = cur_g.get_gui_buttons()
+                button_key = does_click_button(buttons, mouse_pos)
+            except AttributeError:
+                # log print here
+                print('gui %s has no method get_gui_buttons()' % type(cur_g))
+                button_key = None
+            if button_key:
+                # all gui clicks here
+                if buttons[button_key][1] == 'gui':
+                    if button_key == 'map_display':
+                        cur_g = map_display(game_m)
+                    # other gui if's here
 
+                # all other button types here 
+                return cur_g
+    return cur_g
+                     
+
+
+def does_click_button(buttons, mouse_pos):
+    for b in buttons: 
+        if buttons[b][0].collidepoint(mouse_pos):
+            return b
+        else:
+            return None
 
 class game_map(object):
     #storage of updatable *4 pixel object map
@@ -148,7 +180,7 @@ def generate_map(game_map):
 # 	def objects_output():
 # 	def events_output():
 
-# class game_objects(object):
+# class game_state(object):
 # 	#all objects on the map
 # 	def events_input():
 # 	def map_input():
@@ -163,9 +195,10 @@ def main():
 	#initialise modules
     intro_g = intro_gui()
     game_m = game_map()
+    cur_g = intro_g
     while True:
         # game_map, game_state, cur_gui
-        event_loop(game_m, intro_g)
+        cur_g = event_loop(game_m, cur_g)
 
 
 if __name__ == "__main__":
