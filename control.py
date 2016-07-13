@@ -9,6 +9,10 @@
 
 import pygame
 import random
+import datetime
+import logging
+
+import log
 pygame.init()
 random.seed()
 
@@ -56,7 +60,7 @@ class intro_gui(gui):
         #draw to display
         pygame.display.flip()
 
-class map_display(gui):
+class map_gui(gui):
     def __init__(self, game_map):
         self.set_res()
         # gui subsurface map block
@@ -116,7 +120,7 @@ def event_loop(game_m, intro_g):
                 raise SystemExit
             elif event.key == pygame.K_SPACE:
                 #go from intro screen to game screen
-                map_display(game_m)
+                map_gui(game_m)
 
 
 class game_map(object):
@@ -131,7 +135,7 @@ class game_map(object):
     # def player_output():
     # def objects_output():
     def get_map_seg(self, active_map, dim, loc):
-        # tb moved back to map_display and just gen map seg
+        # tb moved back to map_gui and just gen map seg
         return active_map.subsurface(dim)
 
 def generate_map(game_map):
