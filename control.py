@@ -67,7 +67,7 @@ class intro_gui(gui):
     #set up intro surface
     # create dict of intro_gui buttons
     
-    cur_btns = { (200,520,200,100) : 'map_display'}
+    cur_btns = { (200,520,200,100) : 'map_gui'}
     def __init__(self):
         self.set_res()
         intro_screen_position = (0, 0)
@@ -99,15 +99,9 @@ class intro_gui(gui):
         #draw to display
         pygame.display.flip()
 
-<<<<<<< HEAD
-
-class map_display(gui):
-    cur_btns = {}
-=======
-
 class map_gui(gui):
+    cur_btns = {}
 
->>>>>>> origin/master
     def __init__(self, game_map):
         self.set_res()
         # gui subsurface map block
@@ -152,7 +146,7 @@ class map_gui(gui):
 
     def get_gui_buttons(self):
         # create dict of intro_gui buttons tuple (rect, type)
-        return {'map_display': (pygame.Rect(0,0,100,200), 'gui')}
+        return {'map_gui': (pygame.Rect(0,0,100,200), 'gui')}
 
 
 
@@ -168,7 +162,7 @@ def event_loop(game_m, cur_g):
                 raise SystemExit
             elif event.key == pygame.K_SPACE:
                 #go from intro screen to game screen
-                map_display(game_m)
+                map_gui(game_m)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             
@@ -195,32 +189,15 @@ def event_loop(game_m, cur_g):
             #if a button has been clicked
             if button_key:
                 # all gui clicks here
-<<<<<<< HEAD
-                if button_key == 'map_display':
-                    #let the current gui be the map_display
-                    cur_g = map_display(game_m)
+                if button_key == 'map_gui':
+                    #let the current gui be the map_gui
+                    cur_g = map_gui(game_m)
                 # other gui if here
                 # all other button types here 
-
-=======
-                if buttons[button_key][1] == 'gui':
-                    if button_key == 'map_display':
-                        cur_g = map_display(game_m)
-                    # other gui if's here
-
-                # all other button types here
->>>>>>> origin/master
                 return cur_g
     # if no event
     return cur_g
 
-
-def does_click_button(buttons, mouse_pos):
-    for b in buttons:
-        if buttons[b][0].collidepoint(mouse_pos):
-            return b
-        else:
-            return None
 
 class game_map(object):
     #storage of updatable *4 pixel object map
