@@ -16,6 +16,25 @@ import log
 pygame.init()
 random.seed()
 
+class map():
+
+class tile():
+
+class structural():
+
+class dynamic():
+
+class config():
+
+class game_state():
+
+class button():
+
+class character():
+
+class player():
+
+class npc():
 
 class gui(object):
 	#the object that prints to the screen
