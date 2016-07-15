@@ -9,19 +9,23 @@
 
 # libraries
 import pygame
-import logging
 # hierarchy.py
-import log
 import gui
-import button
 import game_map
-import config
-import player
-import npc
-import tile
-
+import game_state
 
 pygame.init()
 
+def main():
+    #initialise modules
+    intro_g = intro_gui()
+    game_m = game_map()
+    cur_g = intro_g
+    while True:
+        # game_map, game_state, cur_gui
+        cur_g = event_loop(game_m, cur_g)
 
-class game_state(config):
+
+if __name__ == "__main__":
+    main()
+    sys.exit()
