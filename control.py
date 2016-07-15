@@ -37,49 +37,89 @@ class player():
 class npc():
 
 class gui(object):
-	#the object that prints to the screen
+    #the object that prints to the screen
     resolution = res_width, res_height = (1280, 720)
     cur_gui = None
+    color_ref = {'black': (0,0,0), 'white': (255, 255, 255)}
     def set_res(self):
         self.display = pygame.display.set_mode(self.resolution)
         pygame.display.set_caption('Hierarchy')
-    def fill_color(self, screen, color, position):
-        screen.fill(color)
-        self.display.blit(screen, position)
+
+    def set_subsurface(self, ss_dim):
+        return self.display.subsurface(ss_dim)
+
     def write_text(self, size, message, color, location):
         font = pygame.font.Font(None, size)
         text = font.render(message, 1, color)
         textpos = text.get_rect()
         textpos.center = location
         self.display.blit(text, textpos)
-    def set_subsurface(self, ss_dim):
-        return self.display.subsurface(ss_dim)
 
-    #def display_gui(self):
-    #    self.
+    def fill_rect(self, location, color):
+        ## this function can be hardware accellerated sometimes, 
+        # draw_rect() can't
+        ## draws a colored rectangle on this gui at location
+        ## pass location as Rect, color as string
+        ## if location = None, whole surface will be filled
+        color_rgb = self.get_color(color)
+        ## fill(color, Rect)
+        self.display.fill(color_rgb, location)
+
+    def draw_rect(self, location, color, width):
+        # draws a rectangle border on this gui at location, 
+        # with color and width
+        # pass location as Rect, color as string, width as int
+        # if width == 0, area will be filled
+        color_rgb = self.get_color(color)
+        # pygame.draw.rect(surface, color, rect, width)
+        pygame.draw.rect(self.display, color_rgb, location, width) 
+
+    def fill_color(self, screen, color, position):
+        screen.fill(color)
+        self.display.blit(screen, position)
+
+    def get_color(self, color):
+        #input color as a string and return RBG code
+        return self.color_ref[color]
 
 class intro_gui(gui):
     #set up intro surface
+    # create dict of intro_gui buttons
+    
+    cur_btns = { (200,520,200,100) : 'map_gui'}
     def __init__(self):
         self.set_res()
         intro_screen_position = (0, 0)
         intro_screen = pygame.Surface(self.resolution)
         #fill black
-        black = (0,0,0)
-        self.fill_color(intro_screen, black, intro_screen_position)
+        self.fill_rect(None, 'black')
         #draw title
         t_size = 108
         t_color = (255, 255, 255)
         t_message = 'Hierarchy'
-        t_location = (self.display.get_width()/3,                        self.display.get_height()/4)
+        t_location = (self.display.get_width()/3, self.display.get_height()/4)
+        self.write_text(t_size, t_message, t_color, t_location)
+
+        # draw button
+        # this is horrible, but there will be button objects later
+        btn_location = (200,520,200,100)
+        color = 'white'
+        width = 5
+        self.draw_rect(btn_location, color, width)
+        # def set_button(): rect = () -> draw_button(rect) (in class button)
+        # text in button
+        t_size = 48
+        t_color = self.color_ref['white']
+        t_message = 'PLAY'
+        t_location = (300, 570)
         self.write_text(t_size, t_message, t_color, t_location)
         # update cur_gui
         self.cur_gui = self
         #draw to display
         pygame.display.flip()
 
-
 class map_gui(gui):
+    cur_btns = {}
 
     def __init__(self, game_map):
         self.set_res()
@@ -125,16 +165,13 @@ class map_gui(gui):
 
     def get_gui_buttons(self):
         # create dict of intro_gui buttons tuple (rect, type)
-        return {'map_display': (pygame.Rect(0,0,100,200), 'gui')}
+        return {'map_gui': (pygame.Rect(0,0,100,200), 'gui')}
 
 
 
 # add game_state
 def event_loop(game_m, cur_g):
     #the object that manages events and time, using screen as an input
-    # def player_input():
-    # def player_output():
-    # def objects_output():
         #monitors for key input and reports back to event loop
         #OUTPUT to EVENT QUEUE
     for event in pygame.event.get():
@@ -144,35 +181,42 @@ def event_loop(game_m, cur_g):
                 raise SystemExit
             elif event.key == pygame.K_SPACE:
                 #go from intro screen to game screen
-                map_display(game_m)
+                map_gui(game_m)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
+            
+            #check if player has clicked a button
             try:
-                buttons = cur_g.get_gui_buttons()
-                button_key = does_click_button(buttons, mouse_pos)
+                ## return name of button clicked
+                mouse_x = mouse_pos[0]
+                mouse_y = mouse_pos[1]
+                mouse_rect = pygame.Rect(mouse_x, mouse_y, 1, 1)
+                # check mouse location against dict of buttons
+                mouse_btn = mouse_rect.collidedict(cur_g.cur_btns)
+
+                # if no button has been clicked
+                if mouse_btn == None:
+                    button_key = None
+                else:
+                    # name of the button clicked (top in dict)
+                    button_key = mouse_btn[1]
             except AttributeError:
                 # log print here
-                print('gui %s has no method get_gui_buttons()' % type(cur_g))
+                #print('gui %s has no method get_gui_buttons()' % type(cur_g))
                 button_key = None
+
+            #if a button has been clicked
             if button_key:
                 # all gui clicks here
-                if buttons[button_key][1] == 'gui':
-                    if button_key == 'map_display':
-                        cur_g = map_display(game_m)
-                    # other gui if's here
-
-                # all other button types here
+                if button_key == 'map_gui':
+                    #let the current gui be the map_gui
+                    cur_g = map_gui(game_m)
+                # other gui if here
+                # all other button types here 
                 return cur_g
     # if no event
     return cur_g
 
-
-def does_click_button(buttons, mouse_pos):
-    for b in buttons:
-        if buttons[b][0].collidepoint(mouse_pos):
-            return b
-        else:
-            return None
 
 class game_map(object):
     #storage of updatable *4 pixel object map
@@ -195,27 +239,16 @@ def generate_map(game_map):
 
 
 # class player_character(object):
-# 	#storage for player attributes
-# 	def map_input():
-# 	def events_input():
-# 	def objects_input():
-# 	def map_output():
-# 	def objects_output():
-# 	def events_output():
+#   #storage for player attributes
+
 
 # class game_state(object):
-# 	#all objects on the map
-# 	def events_input():
-# 	def map_input():
-# 	def player_input():
-# 	def events_output():
-# 	def map_output():
-# 	def player_output():
+#   #all objects on the map
 
 
 
 def main():
-	#initialise modules
+    #initialise modules
     intro_g = intro_gui()
     game_m = game_map()
     cur_g = intro_g
