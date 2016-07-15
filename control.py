@@ -9,6 +9,10 @@
 
 import pygame
 import random
+import datetime
+import logging
+
+import log
 pygame.init()
 random.seed()
 
@@ -95,9 +99,15 @@ class intro_gui(gui):
         #draw to display
         pygame.display.flip()
 
+<<<<<<< HEAD
 
 class map_display(gui):
     cur_btns = {}
+=======
+
+class map_gui(gui):
+
+>>>>>>> origin/master
     def __init__(self, game_map):
         self.set_res()
         # gui subsurface map block
@@ -140,6 +150,10 @@ class map_display(gui):
         stats_ss_dim = pygame.Rect(map_ss.get_width(), 0, self.res_width/4, self.res_height)
         return self.set_subsurface(stats_ss_dim)
 
+    def get_gui_buttons(self):
+        # create dict of intro_gui buttons tuple (rect, type)
+        return {'map_display': (pygame.Rect(0,0,100,200), 'gui')}
+
 
 
 # add game_state
@@ -181,19 +195,28 @@ def event_loop(game_m, cur_g):
             #if a button has been clicked
             if button_key:
                 # all gui clicks here
+<<<<<<< HEAD
                 if button_key == 'map_display':
                     #let the current gui be the map_display
                     cur_g = map_display(game_m)
                 # other gui if here
                 # all other button types here 
 
+=======
+                if buttons[button_key][1] == 'gui':
+                    if button_key == 'map_display':
+                        cur_g = map_display(game_m)
+                    # other gui if's here
+
+                # all other button types here
+>>>>>>> origin/master
                 return cur_g
+    # if no event
     return cur_g
-                     
 
 
 def does_click_button(buttons, mouse_pos):
-    for b in buttons: 
+    for b in buttons:
         if buttons[b][0].collidepoint(mouse_pos):
             return b
         else:
@@ -211,7 +234,7 @@ class game_map(object):
     # def player_output():
     # def objects_output():
     def get_map_seg(self, active_map, dim, loc):
-        # tb moved back to map_display and just gen map seg
+        # tb moved back to map_gui and just gen map seg
         return active_map.subsurface(dim)
 
 def generate_map(game_map):
