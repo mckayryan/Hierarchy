@@ -10,12 +10,11 @@
 # libraries
 import pygame as pg
 # hierarchy.py
-from setup import config
 
 ##
 #
 #
-class tile(config):
+class tile(object):
     pass
 #class structural():
 
@@ -24,7 +23,7 @@ class tile(config):
 ##
 #
 #
-class game_map(config):
+class game_map(object):
     #storage of updatable *4 pixel object map
     #also includes structural map at *64 pixel
     def events_input():
@@ -46,6 +45,5 @@ class game_map(config):
 ##
 #
 #
-class button(config):
-    # tc
+class button(object):
     pass

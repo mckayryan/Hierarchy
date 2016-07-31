@@ -9,13 +9,10 @@
 
 # libraries
 import pygame as pg
-import logging
 # hierarchy.py
-from setup import config
-
 
 ##
 #
 #
-class game_state(config):
+class game_state(object):
     pass

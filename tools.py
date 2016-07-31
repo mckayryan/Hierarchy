@@ -7,35 +7,81 @@
 
 ## Heirarchy is a game of survival that urges the player to discover what it means to be Human.
 
+import os
 import datetime
 import logging
+from logging.config import dictConfig
 
-from setup import config
+##
+# Log call format: getLogger('info').info('message here')
+class create_logger():
 
-class logger(config):
-
-    def __init__():
-        LOG_FILENAME = str(datetime.date.today()) + ".hierarchy.log"
-        LOG_FORMAT = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-        LOG_DATEFMT = '%I:%M:%S %p'
+    def __init__(self, log_level, log_detail):
         ## Set logging level
         logging_config = dict(
             version = 1,
             formatters = {
-                'f': {'format': LOG_FORMAT,
-                      'datefmt': LOG_DATEFMT}
+                'basic': {  'format': log_detail['basic'],
+                            'datefmt': log_detail['date']  },
+                'verbose': {'format': log_detail['verbose'],
+                            'datefmt': log_detail['date']  }
                 },
             handlers = {
-                'h': {'class': 'logging.FileHandler',
-                      'formatter': 'f',
-                      'level': config.log_level["info"],
-                      'filename': LOG_FILENAME,
-                      'mode': 'w'}
+                'info': {   'class': 'logging.FileHandler',
+                            'formatter': 'basic',
+                            'level': log_level["info"],
+                            'filename': log_detail['filename'],
+                            'mode': 'a' }
+
                 },
             root = {
-                'handlers': ['h'],
-                'level': config.log_levels["info"],
+                'handlers': ['info'],
+                'level': log_level['info'],
                 },
         )
         dictConfig(logging_config)
-        print (logging.getLogger())
+
+# draw some text into an area of a surface
+# automatically wraps words
+# returns any text that didn't get blitted
+def wrap_text(surface, text, color, rect, font, aa=False, bkg=None):
+    rect = Rect(rect)
+    y = rect.top
+    lineSpacing = -2
+
+    # get the height of the font
+    fontHeight = font.size("Tg")[1]
+
+    while text:
+        i = 1
+
+        # determine if the row of text will be outside our area
+        if y + fontHeight > rect.bottom:
+            break
+
+        # determine maximum width of line
+        while font.size(text[:i])[0] < rect.width and i < len(text):
+            i += 1
+
+        # if we've wrapped the text, then adjust the wrap to the last word
+        if i < len(text):
+            i = text.rfind(" ", 0, i) + 1
+
+        # render the line and blit it to the surface
+        if bkg:
+            image = font.render(text[:i], 1, color, bkg)
+            image.set_colorkey(bkg)
+        else:
+            image = font.render(text[:i], aa, color)
+
+        surface.blit(image, (rect.left, y))
+        y += fontHeight + lineSpacing
+
+        # remove the text we just blitted
+        text = text[i:]
+
+    return text
+
+def print_attr(obj):
+    from inspect import getmembers
+    print (getmembers(obj))

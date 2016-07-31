@@ -11,8 +11,7 @@
 import pygame as pg
 import logging
 # hierarchy.py
-from tools import logger
-from output import gui
+from settings import config_obj, config
 #import button
 from structure import game_map
 from state import game_state
@@ -39,19 +38,30 @@ def event_loop(game_m, cur_g):
                 ## return name of button clicked
                 mouse_x = mouse_pos[0]
                 mouse_y = mouse_pos[1]
+
                 mouse_rect = pg.Rect(mouse_x, mouse_y, 1, 1)
                 # check mouse location against dict of buttons
-                mouse_btn = mouse_rect.collidedict(cur_g.cur_btns)
+                mouse_btn = mouse_rect.collidedict(cur_g.get_btns())
 
                 # if no button has been clicked
-                if mouse_btn == None:
-                    button_key = None
-                else:
+                button_key = None
+                if mouse_btn:
                     # name of the button clicked (top in dict)
-                    button_key = mouse_btn[1]
+                    button_key = mouse_btn[1][0]
+
+                ### debug prints
+                from pprint import pprint
+                pprint("****mouse click debug prints****")
+                pprint("cur_g.cur_btns: %s" % cur_g.cur_btns)
+                pprint("mouse_rect: %s" % mouse_rect)
+                pprint("have mouse_btn: %s" % (mouse_btn,))
+                pprint("btn_key: %s" % button_key)
+                pprint("****    ****")
+
             except AttributeError:
                 # log print here
-                #print('gui %s has no method get_gui_buttons()' % type(cur_g))
+                logger = config.get_logger('info')
+                logger.info('btn %s has no method get_gui_btns()' % type(cur_g))
                 button_key = None
 
             #if a button has been clicked

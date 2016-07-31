@@ -9,17 +9,22 @@
 
 # libraries
 import pygame as pg
+import logging
 # hierarchy.py
-from setup import config
+from settings import config_obj, config
 from structure import game_map
 from state import game_state
 from control import event_loop
 from output import gui, intro_gui
 
+
 ##
 #
 #
 def main():
+    #global config
+    #logger = config.get_logger('info')
+    #logger.info('In main')
     pg.init()
     # initialise modules
     game_m = game_map()

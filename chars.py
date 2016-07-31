@@ -10,13 +10,13 @@
 # libraries
 import pygame as pg
 # hierarchy.py
-from setup import config
+from settings import config_obj
 
 
 ##
 #
 #
-class character(config):
+class character(object):
     pass
 
 
